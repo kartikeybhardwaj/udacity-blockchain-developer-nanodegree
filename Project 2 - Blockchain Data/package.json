@@ -1,0 +1,15 @@
+{
+  "name": "project_2",
+  "version": "1.0.0",
+  "description": "This is Project 2, Private Blockchain, in this project I created the classes to manage my private blockchain, to be able to persist my blochchain I used LevelDB.",
+  "main": "simpleChain.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "level": "^5.0.1"
+  }
+}
