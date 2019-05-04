@@ -1,4 +1,4 @@
-# Project - Connect Private Blockchain to Front-End Client via APIs
+# Project #3. Connect Private Blockchain to Front-End Client via APIs
 
 This project has RESTful APIs built using Express Node.js framework that interfaces with the private blockchain built in [Project 2](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%202%20-%20Blockchain%20Data).
 
