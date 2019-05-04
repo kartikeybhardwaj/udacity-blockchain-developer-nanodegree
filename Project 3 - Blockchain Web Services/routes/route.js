@@ -1,13 +1,13 @@
 module.exports = (server) => {
 
-    const view = require('../views/view.js');
+    const util = require('../utility/util.js');
 
     /*****************************************************
      ** Get request which return Block Data of given id **
      *****************************************************/
 
     server.get('/block/:blockId', async (req, res) => {
-        const responseToUser = await view.getBlock(req, res);
+        const responseToUser = await util.getBlock(req, res);
         res.json(responseToUser);
     });
 
@@ -16,7 +16,7 @@ module.exports = (server) => {
      *************************************************************/
 
     server.post('/block', async (req, res) => {
-        const responseToUser = await view.addBlock(req, res);
+        const responseToUser = await util.addBlock(req, res);
         res.json(responseToUser);
     });
 

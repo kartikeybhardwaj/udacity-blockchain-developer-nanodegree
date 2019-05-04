@@ -1,4 +1,4 @@
-const BlockChain = require('../controllers/BlockChain.js');
+const BlockChain = require('../helpers/BlockChain.js');
 const Block = require('../models/Block.js');
 const myBlockChain = new BlockChain.Blockchain();
 
