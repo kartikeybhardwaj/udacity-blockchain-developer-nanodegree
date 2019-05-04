@@ -1,6 +1,9 @@
 # Project #3. Connect Private Blockchain to Front-End Client via APIs
 
 This project has RESTful APIs built using Express Node.js framework that interfaces with the private blockchain built in [Project 2](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%202%20-%20Blockchain%20Data).
+This project has two endpoints:
+* GET block
+* POST block
 
 ## Getting Started
 
@@ -24,13 +27,17 @@ Run server
 $ node server.js
 ```
 
-## Get Block API
+## GET Block Endpoint
+
+This endpoint has a GET request which uses a URL path with a block height parameter. The response for this endpoint provides block object in JSON format.
 
 REQUEST:
 
 ```
 TYPE: GET
-URL: http://localhost:8000/block/{block_height}
+URL: http://localhost:8000/block/[blockheight]
+Example URL path:
+http://localhost:8000/block/0, where '0' is the block height
 ```
 
 RESPONSE:
@@ -45,7 +52,9 @@ RESPONSE:
 }
 ```
 
-## Add Block API
+## POST Block Endpoint
+
+This endpoint posts a new block with data payload option to add data to the block body. The block body supports a string of text. The response for the endpoint provides block object in JSON format.
 
 REQUEST:
 
@@ -53,7 +62,7 @@ REQUEST:
 TYPE: POST
 URL: http://localhost:8000/block
 HEADER: { Content-Type: application/json }
-BODY:
+Example BODY:
 {
 	"body": "Test Block 1"
 }
