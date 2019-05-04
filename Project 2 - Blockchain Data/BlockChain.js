@@ -142,7 +142,7 @@ class Blockchain {
             const errorLog = [];
             this.getBlockHeight()
                 .then(async (blockHeight) => {
-                    for (let i = 0; i < blockHeight; i++) {
+                    for (let i = 0; i <= blockHeight; i++) {
                         // validate block
                         await this.validateBlock(i)
                             .then((valid) => {
