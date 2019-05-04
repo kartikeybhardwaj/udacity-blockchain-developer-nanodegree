@@ -64,7 +64,7 @@ URL: http://localhost:8000/block
 HEADER: { Content-Type: application/json }
 Example BODY:
 {
-	"body": "Test Block 1"
+    "body": "Test Block 1"
 }
 ```
 
