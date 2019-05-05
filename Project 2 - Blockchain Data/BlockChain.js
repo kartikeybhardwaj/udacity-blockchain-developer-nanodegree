@@ -24,15 +24,15 @@ class Blockchain {
                 if (blockHeight == -1) {
                     this.addBlock(new Block.Block("First block in the chain - Genesis block"))
                         .then((response) => {
-                            console.log(response);
+                            console.info(response);
                         })
                         .catch((error) => {
-                            console.log(error);
+                            console.error(error);
                         });
                 }
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
             });
     }
 
@@ -184,9 +184,9 @@ class Blockchain {
         return new Promise((resolve, reject) => {
             this.bd.addLevelDBData(height, JSON.stringify(block).toString()).then((blockModified) => {
                 resolve(blockModified);
-            }).catch((err) => {
-                console.log(err);
-                reject(err)
+            }).catch((error) => {
+                console.error(error);
+                reject(error)
             });
         });
     }
