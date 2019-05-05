@@ -1,9 +1,9 @@
-/* ===== Persist data with LevelDB ==================
-|  Learn more: level: https://github.com/Level/level |
-/===================================================*/
+/* ===== Persist data with LevelDB ================== |
+|  Learn more: level: https://github.com/Level/level  |
+|  ================================================= */
 
 const level = require('level');
-const chainDB = './databases/chaindata';
+const chainDB = './chaindata';
 
 class LevelSandbox {
 
@@ -14,8 +14,8 @@ class LevelSandbox {
   // Get data from levelDB with key (Promise)
   getLevelDBData(key) {
     return new Promise((resolve, reject) => {
-      this.db.get(key, function (err, value) {
-        if (err) {
+      this.db.get(key, (error, value) => {
+        if (error) {
           reject('Not found!');
         } else {
           resolve(value);
@@ -29,9 +29,9 @@ class LevelSandbox {
     return new Promise((resolve, reject) => {
       this.db.put(key, value, (err) => {
         if (err) {
-          reject('Block ' + key + ' submission failed');
+          reject(`Block ${key} submission failed`);
         } else {
-          resolve('Block added with key ' + key + ' and value ' + value);
+          resolve(`Block added with key ${key} and value ${value}`);
         }
       });
     });
@@ -43,17 +43,17 @@ class LevelSandbox {
       let i = 0;
       this.db.createReadStream()
         .on('data', (data) => {
-          i++;
+          i += 1;
         })
-        .on('error', (err) => {
-          reject('Unable to read data stream!')
+        .on('error', (error) => {
+          console.error(error);
+          reject('Unable to read data stream!');
         })
         .on('close', () => {
           resolve(i);
         });
     });
   }
-
 }
 
 module.exports.LevelSandbox = LevelSandbox;
