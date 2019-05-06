@@ -2,6 +2,8 @@ const BlockChain = require('../helpers/BlockChain.js');
 const Block = require('../models/Block.js');
 const myBlockChain = new BlockChain.Blockchain();
 
+const TimeoutRequestsWindowTime = 5 * 60 * 1000;
+
 module.exports = {
 
     /*************************************************************
@@ -11,7 +13,18 @@ module.exports = {
     requestValidation: async (req, res) => {
         let responseToUser = {};
         const body = req.body;
+        const timeElapse = (new Date().getTime().toString().slice(0, -3)) - req.requestTimeStamp;
+        const timeLeft = (TimeoutRequestsWindowTime / 1000) - timeElapse;
+        const validationWindow = timeLeft;
         return responseToUser;
+    },
+
+    addRequest: () => {
+
+    },
+
+    removeRequest: () => {
+
     },
 
     /*************************************************************
