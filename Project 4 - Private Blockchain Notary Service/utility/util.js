@@ -1,8 +1,9 @@
-const BlockChain = require('../helpers/BlockChain.js');
-const Block = require('../models/Block.js');
-const myBlockChain = new BlockChain.Blockchain();
+// const BlockChain = require('../helpers/BlockChain.js');
+// const Block = require('../models/Block.js');
+// const myBlockChain = new BlockChain.Blockchain();
 
-const TimeoutRequestsWindowTime = 5 * 60 * 1000;
+const Mempool = require('../helpers/Mempool.js');
+const myMempool = new Mempool.Mempool();
 
 module.exports = {
 
@@ -13,18 +14,16 @@ module.exports = {
     requestValidation: async (req, res) => {
         let responseToUser = {};
         const body = req.body;
-        const timeElapse = (new Date().getTime().toString().slice(0, -3)) - req.requestTimeStamp;
-        const timeLeft = (TimeoutRequestsWindowTime / 1000) - timeElapse;
-        const validationWindow = timeLeft;
+        if (body && body.address && body.address.length > 0) {
+            await myMempool.addTransaction(body.address)
+                .then((response) => {
+                    responseToUser = response;
+                });
+        } else {
+            responseToUser.error = 'Address not available';
+            res.status(404);
+        }
         return responseToUser;
-    },
-
-    addRequest: () => {
-
-    },
-
-    removeRequest: () => {
-
     },
 
     /*************************************************************
