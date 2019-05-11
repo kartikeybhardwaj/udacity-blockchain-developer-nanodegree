@@ -3,9 +3,9 @@
 |  ================================================*/
 
 class Transaction {
-    constructor(address) {
+    constructor(address, timestamp) {
         this.address = address;
-        this.requestedAt = '';
+        this.requestedAt = timestamp;
     }
 }
 

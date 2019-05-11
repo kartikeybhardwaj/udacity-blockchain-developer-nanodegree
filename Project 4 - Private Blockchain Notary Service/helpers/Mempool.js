@@ -3,11 +3,12 @@
 |  ============================================= */
 
 const Transaction = require('../models/Transaction.js');
-const TimeoutRequestsWindowTime = 5 * 60 * 1000;
 
 class Mempool {
     constructor() {
+        this.timeoutRequestsWindowTime = 5 * 60 * 1000;
         this.transactionList = [];
+        this.validatedTransationList = [];
     }
 
     getTransactionByAddress(address) {
@@ -16,37 +17,28 @@ class Mempool {
         });
     }
 
-    addTransaction(address) {
-        return new Promise(async (resolve, reject) => {
-            await this.getTransactionByAddress(address)
-                .then((tx) => {
-                    const currentTimeStamp = new Date().getTime().toString().slice(0, -3);
-                    let requestTimeStamp = currentTimeStamp;
-                    let validationWindow = TimeoutRequestsWindowTime / 1000;
-                    if (tx === undefined) {
-                        tx = new Transaction.Transaction(address);
-                        tx.requestedAt = currentTimeStamp;
-                        this.transactionList.push(tx);
-                        setTimeout(() => {
-                            this.removeTransaction(tx).then((wasAvailableAndRemoved) => {
-                                if (wasAvailableAndRemoved) {
-                                    console.log('Transaction with address', address, 'has been timed out.');
-                                }
-                            });
-                        }, TimeoutRequestsWindowTime);
-                    } else {
-                        requestTimeStamp = tx.requestedAt;
-                        const timeElapse = currentTimeStamp - requestTimeStamp;
-                        const timeLeft = (TimeoutRequestsWindowTime / 1000) - timeElapse;
-                        validationWindow = timeLeft;
-                    }
-                    resolve({
-                        walletAddress: address,
-                        requestTimeStamp: requestTimeStamp,
-                        message: address.concat(':').concat(requestTimeStamp).concat(':').concat('starRegistry'),
-                        validationWindow: validationWindow
-                    });
-                });
+    getValidatedTransactionByAddress(address) {
+        return new Promise((resolve, reject) => {
+            resolve(this.validatedTransationList.find(tx => tx.address === address));
+        });
+    }
+
+    addToTransactionList(address, timestamp) {
+        return new Promise((resolve, reject) => {
+            const tx = new Transaction.Transaction(address, timestamp);
+            this.transactionList.push(tx);
+            console.log('TX mempool =>', 'New transaction with address', address, 'has been added.');
+            setTimeout(() => {
+                this.removeTransaction(tx);
+            }, this.timeoutRequestsWindowTime);
+        });
+    }
+
+    addToValidatedTransactionList(address, timestamp) {
+        return new Promise((resolve, reject) => {
+            const vtx = new Transaction.Transaction(address, timestamp);
+            this.validatedTransationList.push(vtx);
+            console.log('VTX mempool =>', 'New transaction with address', address, 'has been added.');
         });
     }
 
@@ -57,12 +49,29 @@ class Mempool {
             }).indexOf(tx.address);
             if (indexOfTx !== -1) {
                 this.transactionList.splice(indexOfTx, 1);
+                console.log('TX mempool =>', 'Transaction with address', tx.address, 'has been removed.');
                 resolve(true);
             } else {
                 resolve(false);
             }
         });
     }
+
+    removeValidatedTransaction(vtx) {
+        return new Promise((resolve, reject) => {
+            const indexOfVtx = this.validatedTransationList.map((_) => {
+                return _.address;
+            }).indexOf(vtx.address);
+            if (indexOfVtx !== -1) {
+                this.validatedTransationList.splice(indexOfVtx, 1);
+                console.log('VTX mempool =>', 'Transaction with address', vtx.address, 'has been removed.');
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        });
+    }
+
 }
 
 module.exports.Mempool = Mempool;
