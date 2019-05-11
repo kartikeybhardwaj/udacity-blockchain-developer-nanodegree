@@ -1,10 +1,10 @@
 # Project #4. Private Blockchain Notary Service
 
 This project is a Star Registry Service that allows users to claim ownership of their favorite star in the night sky.
-This project has RESTful APIs built using Express Node.js framework that interfaces with the private blockchain built in [Project 2](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%202%20-%20Blockchain%20Data) and is built upon structure of [Project 3](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%203%20-%20Blockchain%20Web%20Services).
-This project has two endpoints:
-* GET block
-* POST block
+This project has RESTful APIs built using Express Node.js framework that interfaces with the private blockchain built in [Project 2](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%202%20-%20Blockchain%20Data) and is built upon the structure of [Project 3](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%203%20-%20Blockchain%20Web%20Services).
+This project has six endpoints:
+* Three POST endpoints
+* Three GET endpoints
 
 ## Getting Started
 
