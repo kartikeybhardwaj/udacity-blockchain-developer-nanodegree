@@ -1,5 +1,6 @@
 module.exports = {
 
+    // mothod that converts string hex value to normal string format
     hex2ascii: (hexVal) => {
         var hex = hexVal.toString(); //force conversion
         var str = '';

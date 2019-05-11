@@ -19,8 +19,9 @@ require('./routes/route.js')(server);
  * 200: OK
  * 201: Created
  * Client Error *******************
- * 406: Not Acceptable
  * 404: Not Found
+ * 405: Method Not Allowed
+ * 406: Not Acceptable
  * Server Error *******************
  * 500: Internal Server Error
  **********************************/
