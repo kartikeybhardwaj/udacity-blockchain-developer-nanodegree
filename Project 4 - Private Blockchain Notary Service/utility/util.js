@@ -182,8 +182,8 @@ module.exports = {
             await myBlockChain.getBlockByHash(params.hash)
                 .then((block) => {
                     if (block !== null) {
+                        block.body.star.storyDecoded = hex2ascii.hex2ascii(block.body.star.story);
                         responseToUser = block;
-                        responseToUser.body.star.storyDecoded = hex2ascii.hex2ascii(block.body.star.story);
                         res.status(201);
                     } else {
                         responseToUser.error = 'Star not found';
@@ -209,6 +209,30 @@ module.exports = {
     getStarByAddress: async (req, res) => {
         let responseToUser = {};
         const params = req.params;
+        if (params && params.address && params.address.length > 0) {
+            await myBlockChain.getBlocksByAddress(params.address)
+                .then((blocks) => {
+                    const blocksCount = blocks.length;
+                    if (blocksCount > 0) {
+                        for (let i = 0; i < blocksCount; i++) {
+                            blocks[i].body.star.storyDecoded = hex2ascii.hex2ascii(blocks[i].body.star.story);
+                        }
+                        responseToUser = blocks;
+                        res.status(201);
+                    } else {
+                        responseToUser.error = 'Star not found';
+                        res.status(404);
+                    }
+                })
+                .catch((error) => {
+                    console.error('error', error);
+                    responseToUser.error = error;
+                    res.status(500);
+                });
+        } else {
+            responseToUser.error = 'Address does not meet requirements';
+            res.status(406);
+        }
         return responseToUser;
     },
 
@@ -219,6 +243,26 @@ module.exports = {
     getStarByBlockHeight: async (req, res) => {
         let responseToUser = {};
         const params = req.params;
+        // get requested block id from parameters
+        const requestedBlockId = parseInt(params.blockHeight);
+        // given block should be a number and greater than -1
+        if (!isNaN(params.blockHeight) && requestedBlockId > -1) {
+            await myBlockChain.getBlock(requestedBlockId)
+                .then((block) => {
+                    if (requestedBlockId !== 0) {
+                        block.body.star.storyDecoded = hex2ascii.hex2ascii(block.body.star.story);
+                    }
+                    responseToUser = block;
+                    res.status(201);
+                })
+                .catch((error) => {
+                    responseToUser.error = 'Star not found';
+                    res.status(404);
+                });
+        } else {
+            responseToUser.error = 'Block height does not meet requirements';
+            res.status(406);
+        }
         return responseToUser;
     },
 

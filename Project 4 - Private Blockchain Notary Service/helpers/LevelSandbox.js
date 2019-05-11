@@ -75,6 +75,28 @@ class LevelSandbox {
         });
     });
   }
+
+  // Get blocks by address
+  getBlocksByAddress(address) {
+    return new Promise((resolve, reject) => {
+      let blocks = [];
+      this.db.createReadStream()
+        .on('data', (data) => {
+          const parsedValue = JSON.parse(data.value);
+          if (parsedValue.body.address === address) {
+            blocks.push(parsedValue);
+          }
+        })
+        .on('error', (error) => {
+          console.error(error);
+          reject('Unable to read data stream!');
+        })
+        .on('close', () => {
+          resolve(blocks);
+        });
+    });
+  }
+
 }
 
 module.exports.LevelSandbox = LevelSandbox;

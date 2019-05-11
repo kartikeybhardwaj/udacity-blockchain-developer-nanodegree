@@ -60,6 +60,19 @@ class Blockchain {
     });
   }
 
+  // Get block by hash, it is a helper method that returns a block in the blockchain
+  getBlocksByAddress(address) {
+    return new Promise((resolve, reject) => {
+      this.bd.getBlocksByAddress(address)
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
   // Add new block
   addBlock(block) {
     const newBlock = block;
