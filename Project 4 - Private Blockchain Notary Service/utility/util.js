@@ -5,6 +5,8 @@ const myBlockChain = new BlockChain.Blockchain();
 const Mempool = require('../helpers/Mempool.js');
 const myMempool = new Mempool.Mempool();
 
+const hex2ascii = require('./hex2ascii.js');
+
 const bitcoinMessage = require('bitcoinjs-message');
 
 module.exports = {
@@ -56,7 +58,7 @@ module.exports = {
             await myMempool.getTransactionByAddress(body.address)
                 .then(async (tx) => {
                     if (tx !== undefined) {
-                        const message = tx.requestedAt.concat(':').concat(tx.requestedAt).concat(':').concat('starRegistry')
+                        const message = tx.address.concat(':').concat(tx.requestedAt).concat(':').concat('starRegistry')
                         let isValid = false;
                         try {
                             isValid = bitcoinMessage.verify(message, tx.address, body.signature);
@@ -125,7 +127,7 @@ module.exports = {
                             star: {
                                 ra: body.star.ra,
                                 dec: body.star.dec,
-                                story: Buffer.alloc(body.star.story).toString('hex')
+                                story: Buffer.from(body.star.story).toString('hex')
                             }
                         };
                         const block = new Block.Block(blockData);
@@ -176,6 +178,27 @@ module.exports = {
     getStarByHash: async (req, res) => {
         let responseToUser = {};
         const params = req.params;
+        if (params && params.hash && params.hash.length > 0) {
+            await myBlockChain.getBlockByHash(params.hash)
+                .then((block) => {
+                    if (block !== null) {
+                        responseToUser = block;
+                        responseToUser.body.star.storyDecoded = hex2ascii.hex2ascii(block.body.star.story);
+                        res.status(201);
+                    } else {
+                        responseToUser.error = 'Star not found';
+                        res.status(404);
+                    }
+                })
+                .catch((error) => {
+                    console.error('error', error);
+                    responseToUser.error = error;
+                    res.status(500);
+                });
+        } else {
+            responseToUser.error = 'Hash does not meet requirements';
+            res.status(406);
+        }
         return responseToUser;
     },
 
