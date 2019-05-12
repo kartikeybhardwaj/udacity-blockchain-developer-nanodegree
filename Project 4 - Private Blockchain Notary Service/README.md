@@ -139,9 +139,9 @@ REQUEST:
 
 ```
 TYPE: GET
-URL: http://localhost:8000/stars/hash/[blockhash]
+URL: http://localhost:8000/stars/hash::[blockhash]
 Example URL path:
-http://localhost:8000/stars/hash/e5fe47ba3f0e5ff960a8d3ffe4ffe6b1c3edab27f8c3944dd895fdf50a276c3c, where 'e5fe47ba3f0e5ff960a8d3ffe4ffe6b1c3edab27f8c3944dd895fdf50a276c3c' is the block hash
+http://localhost:8000/stars/hash:e5fe47ba3f0e5ff960a8d3ffe4ffe6b1c3edab27f8c3944dd895fdf50a276c3c, where 'e5fe47ba3f0e5ff960a8d3ffe4ffe6b1c3edab27f8c3944dd895fdf50a276c3c' is the block hash
 ```
 
 RESPONSE:
@@ -172,9 +172,9 @@ REQUEST:
 
 ```
 TYPE: GET
-URL: http://localhost:8000/stars/address/[walletaddress]
+URL: http://localhost:8000/stars/address::[walletaddress]
 Example URL path:
-http://localhost:8000/stars/address/1MPUSndUm6NGZqv3yekP5JrLUkY8pthm6j, where '1MPUSndUm6NGZqv3yekP5JrLUkY8pthm6j' is the wallet address
+http://localhost:8000/stars/address:1MPUSndUm6NGZqv3yekP5JrLUkY8pthm6j, where '1MPUSndUm6NGZqv3yekP5JrLUkY8pthm6j' is the wallet address
 ```
 
 RESPONSE:
