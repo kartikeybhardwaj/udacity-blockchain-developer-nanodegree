@@ -33,7 +33,7 @@ module.exports = (server) => {
      ** Get Star block by hash ***********************************
      *************************************************************/
 
-    server.get('/stars/hash/:hash', async (req, res) => {
+    server.get('/stars/hash::hash', async (req, res) => {
         const responseToUser = await util.getStarByHash(req, res);
         res.json(responseToUser);
     });
@@ -42,7 +42,7 @@ module.exports = (server) => {
      ** Get Star block by wallet address *************************
      *************************************************************/
 
-    server.get('/stars/address/:address', async (req, res) => {
+    server.get('/stars/address::address', async (req, res) => {
         const responseToUser = await util.getStarByAddress(req, res);
         res.json(responseToUser);
     });
