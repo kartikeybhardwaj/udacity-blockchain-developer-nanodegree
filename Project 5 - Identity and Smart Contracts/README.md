@@ -46,6 +46,7 @@ npm run dev
 Setup [Infura](https://infura.io/)
 
 Copy project id and paste in truffle-config.js file
+
 Add metamask seed in truffle-config.js file
 
 ```
