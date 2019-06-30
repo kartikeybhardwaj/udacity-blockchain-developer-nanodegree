@@ -6,3 +6,4 @@
 * [Project 4 - Private Blockchain Notary Service](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%204%20-%20Private%20Blockchain%20Notary%20Service)
 * [Project 5 - Identity and Smart Contracts](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%205%20-%20Identity%20and%20Smart%20Contracts)
 * [Project 6 - Blockchain Architecture Part A](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%206%20-%20Blockchain%20Architecture%20Part%20A)
+* [Project 7 - Blockchain Architecture Part B](https://github.com/kartikeybhardwaj/udacity-blockchain-developer-nanodegree/tree/master/Project%207%20-%20Blockchain%20Architecture%20Part%20B)
