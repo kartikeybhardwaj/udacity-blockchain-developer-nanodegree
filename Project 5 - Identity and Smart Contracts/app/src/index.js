@@ -46,11 +46,8 @@ const App = {
   },
 
   lookUp: async function () {
-    // const instance = await StarNotary.deployed();
     const id = document.getElementById("lookid").value;
-    let name = await lookUptokenIdToStarInfo(id, {
-      from: this.account
-    });
+    let name = await this.meta.methods.lookUptokenIdToStarInfo(id).call();
     App.setStatus("Name of the Star is " + name + ".");
   }
 
