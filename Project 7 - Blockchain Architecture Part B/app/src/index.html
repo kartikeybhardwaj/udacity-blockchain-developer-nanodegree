@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoKart DApp</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <style>
+    body {
+      background-color: #fff;
+      padding: 2em;
+      font-family: 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif';
+      color: #212121;
+    }
+    .container {
+      width: 80%;
+      margin: 0 auto;
+    }
+    input {
+      width: 93%;
+      padding: 12px 20px;
+      margin: 10px 0;
+    }
+    button {
+      border-radius: 10px;
+      cursor: pointer;
+      border: none;
+      color: white;
+      background-color: #00BCD4;
+      font-size: 16px;
+      padding: 16px 32px;
+      text-decoration: none;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+    .status {
+      width: 35%;
+      float: right;
+      border-radius: 10px;
+      padding: 2vh;
+      background-color: rgb(237, 242, 243);
+    }
+    p {
+      margin: 0;
+      padding: 0;
+    }
+    .form {
+      border-radius: 10px;
+      padding: 2vh;
+      width: 50%;
+      background-color: rgb(237, 242, 243);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 style="text-align: center;">CryptoKart DApp</h1>
+    <hr><br>
+    <p style="text-align: center;">Prove the authenticity of Kart items using the Ethereum blockchain.</p>
+  </div>
+
+  <h2>Print an item</h2>
+  <div class="status">
+    <p id="print_status"></p>
+  </div>
+  <div class="form">
+    <p>UPC</p>
+    <input type="text" id="print_itemUPC"></input>
+    <p>Seller Name</p>
+    <input type="text" id="print_itemSellername"></input>
+    <p>Product Notes</p>
+    <input type="text" id="print_itemProductNotes"></input>
+    <p>Product Price (in ETH)</p>
+    <input type="text" id="print_itemProductPrice"></input>
+    <button onclick="App.printItemFunc()">Print Item</button>
+  </div>
+
+  <h2>Purchase an item</h2>
+  <div class="status">
+    <p id="purchase_status"></p>
+  </div>
+  <div class="form">
+    <p>UPC</p>
+    <input type="text" id="purchase_itemUPC"></input>
+    <button onclick="App.purchaseItemFunc()">Purchase Item</button>
+  </div>
+
+  <h2>Ship an item</h2>
+  <div class="status">
+    <p id="ship_status"></p>
+  </div>
+  <div class="form">
+    <p>UPC</p>
+    <input type="text" id="ship_itemUPC"></input>
+    <p>Transporter ID</p>
+    <input type="text" id="ship_itemTransporterID"></input>
+    <button onclick="App.shipItemFunc()">Ship Item</button>
+  </div>
+
+  <h2>Receive an item</h2>
+  <div class="status">
+    <p id="receive_status"></p>
+  </div>
+  <div class="form">
+    <p>UPC</p>
+    <input type="text" id="receive_itemUPC"></input>
+    <button onclick="App.receiveItemFunc()">Receive Item</button>
+  </div>
+
+  <h2>Retrieve item print details</h2>
+  <div class="status">
+    <p id="printDetails_status"></p>
+  </div>
+  <div class="form">
+    <p>UPC</p>
+    <input type="text" id="printDetails_itemUPC"></input>
+    <button onclick="App.fetchItemPrintDetailsFunc()">Retrieve Details</button>
+  </div>
+
+  <h2>Retrieve item chain details</h2>
+  <div class="status">
+    <p id="chainDetails_status"></p>
+  </div>
+  <div class="form">
+    <p>UPC</p>
+    <input type="text" id="chain_itemUPC"></input>
+    <button onclick="App.fetchItemChainFunc()">Retrieve Details</button>
+  </div>
+
+  <script src="./index.js"></script>
+</body>
+
+</html>
