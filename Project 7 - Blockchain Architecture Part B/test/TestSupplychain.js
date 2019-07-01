@@ -17,6 +17,7 @@ it('can print an item', async () => {
     const sellerName = 'kartoon';
     const productNotes = 'just a kartoon';
     const productPrice = web3.utils.toWei(".01", "ether");
+    await instance.addSeller(sellerID);
     await instance.printItem(upc, sellerName, productNotes, productPrice, {
         from: sellerID
     });
@@ -70,7 +71,8 @@ it('lets user2 buy an item', async () => {
         value: balance,
         gasPrice: 0
     });
-    assert.equal(await instance.ownerOf.call(upc), user2);
+    const receivedVal = await instance.fetchItemBufferTwo(upc);
+    assert.equal(receivedVal[7], user2);
 });
 
 it('lets user2 buy an item and decreases its balance in ether', async () => {
@@ -95,14 +97,6 @@ it('lets user2 buy an item and decreases its balance in ether', async () => {
     const balanceAfterUser2BuysItem = await web3.eth.getBalance(user2);
     let value = Number(balanceOfUser2BeforeTransaction) - Number(balanceAfterUser2BuysItem);
     assert.equal(value, productPrice);
-});
-
-it('can add item name and item symbol properly', async () => {
-    let instance = await SupplyChain.deployed();
-    let receivedName = await instance.name();
-    let receivedSymbol = await instance.symbol();
-    assert.equal(receivedName, "CryptoKart");
-    assert.equal(receivedSymbol, "OON");
 });
 
 it('lets user2 buy an item and become consumer', async () => {
