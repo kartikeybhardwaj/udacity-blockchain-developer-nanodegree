@@ -67,6 +67,18 @@ Contract Address:
 0x34A2258b93CB8Be01A18b0b721f1BC578bfA494b
 ```
 
+Library used:
+
+```
+web3.js - web3.js is a collection of libraries which allow you to interact with a local or remote Ethereum node, using an HTTP, WebSocket or IPC connection.
+```
+
+IPFS used:
+
+```
+No
+```
+
 UML Diagrams:
 
 * [activity diagram](./diagrams/activity_diagram.jpg?raw=true "Activity diagram")
@@ -77,6 +89,7 @@ UML Diagrams:
 
 ## Built With
 
+* [web3.js](https://github.com/ethereum/web3.js/) - web3.js is a collection of libraries which allow you to interact with a local or remote Ethereum node, using an HTTP, WebSocket or IPC connection.
 * [Truffle](https://www.trufflesuite.com/docs/truffle/getting-started/installation) - A development environment, testing framework and asset pipeline for blockchains using the Ethereum Virtual Machine (EVM).
 * [Infura](https://infura.io) - Provide secure, reliable, and scalable access to Ethereum and IPFS. It also provide the infrastructure for your decentralized applications so you can focus on the features.
 * [Metamask](https://metamask.io/) - A bridge that allows you to visit the distributed web of tomorrow in your browser today. It allows you to run Ethereum dApps right in your browser without running a full Ethereum node.
