@@ -1,13 +1,15 @@
 pragma solidity >= 0.4 .24;
 
-//Importing openzeppelin-solidity ERC-721 implemented Standard
-import "../../node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721.sol";
+import "../accesscontrol/ConsumerRole.sol";
+import "../accesscontrol/SellerRole.sol";
+import "../accesscontrol/TransporterRole.sol";
+import "../core/Ownable.sol";
 
 // Define a contract 'Supplychain'
-contract SupplyChain is ERC721 {
+contract SupplyChain is Ownable, SellerRole, TransporterRole, ConsumerRole {
 
   // Define 'owner'
-  address payable owner;
+  address owner;
 
   // Define a variable called 'upc' for Universal Product Code (UPC)
   uint upc;
@@ -45,11 +47,6 @@ contract SupplyChain is ERC721 {
     address transporterID; // Metamask-Ethereum address of the Transporter
     address payable consumerID; // Metamask-Ethereum address of the Consumer
   }
-
-  // name: Is a short name to your token
-  // symbol: Is a short string like 'USD' -> 'American Dollar'
-  string public constant name = "CryptoKart";
-  string public constant symbol = "OON";
 
   // Define 4 events with the same 4 state values and accept 'upc' as input argument
   event Printed(uint upc);
@@ -125,7 +122,8 @@ contract SupplyChain is ERC721 {
   // Define a function 'kill' if required
   function kill() public {
     if (msg.sender == owner) {
-      selfdestruct(owner);
+      address payable ownerAddressPayable = _make_payable(owner);
+      selfdestruct(ownerAddressPayable);
     }
   }
 
@@ -135,7 +133,9 @@ contract SupplyChain is ERC721 {
   }
 
   // Define a function 'printItem' that allows a seller to mark an item 'Printed'
-  function printItem(uint _upc, string memory _originSellerName, string memory _productNotes, uint _price) public {
+  function printItem(uint _upc, string memory _originSellerName, string memory _productNotes, uint _price) public
+  // call modifier to check if user is seller
+  onlySeller() {
     // Add the new item as part of Print
     items[_upc] = Item(
       sku,
@@ -149,8 +149,6 @@ contract SupplyChain is ERC721 {
       address(0),
       address(0)
     );
-    // _mint assign the the item with _upc to the sender address (ownership)
-    _mint(msg.sender, _upc);
     // Increment sku
     sku = sku + 1;
     // Emit the appropriate event
@@ -163,9 +161,8 @@ contract SupplyChain is ERC721 {
   // Call modifier to check if upc has passed previous supply chain stage
   printed(_upc) {
     uint itemPrice = items[_upc].productPrice;
-    address ownerAddress = ownerOf(_upc);
+    address ownerAddress = items[_upc].originSellerID;
     require(msg.value >= itemPrice, "You need to have enough Ether");
-    _transferFrom(ownerAddress, msg.sender, _upc);
     address payable ownerAddressPayable = _make_payable(ownerAddress);
     ownerAddressPayable.transfer(itemPrice);
     if (msg.value > itemPrice) {
@@ -180,6 +177,8 @@ contract SupplyChain is ERC721 {
 
   // Define a function 'shipItem' that allows a seller to mark an item 'Shipped'
   function shipItem(uint _upc, address _transporterID) public
+  // call modifier to check if user is seller
+  onlySeller()
   // Call modifier to check if upc has passed previous supply chain stage
   purchased(_upc)
   // Call modifier to verify caller of this function
