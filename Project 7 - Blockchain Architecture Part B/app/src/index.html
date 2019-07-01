@@ -18,7 +18,7 @@
       margin: 0 auto;
     }
     input {
-      width: 93%;
+      width: 90%;
       padding: 12px 20px;
       margin: 10px 0;
     }
@@ -59,6 +59,16 @@
     <h1 style="text-align: center;">CryptoKart DApp</h1>
     <hr><br>
     <p style="text-align: center;">Prove the authenticity of Kart items using the Ethereum blockchain.</p>
+  </div>
+
+  <h2>Add seller</h2>
+  <div class="status">
+    <p id="addSeller_status"></p>
+  </div>
+  <div class="form">
+    <p>Seller ID</p>
+    <input type="text" id="addSeller_sellerID"></input>
+    <button onclick="App.addSellerFunc()">Add Seller</button>
   </div>
 
   <h2>Print an item</h2>

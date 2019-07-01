@@ -28,6 +28,15 @@ const App = {
     }
   },
 
+  addSellerFunc: async function () {
+    const {
+      addSeller
+    } = this.meta.methods;
+    const sellerID = document.getElementById("addSeller_sellerID").value;
+    await addSeller(sellerID);
+    document.getElementById("addSeller_status").innerHTML = "Seller with address " + sellerID + " has been added.";
+  },
+
   printItemFunc: async function () {
     const {
       printItem
