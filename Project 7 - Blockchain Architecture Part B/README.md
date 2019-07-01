@@ -61,28 +61,10 @@ Truffle version used:
 5.0.24
 ```
 
-OpenZeppelin version used:
-
-```
-2.3.0
-```
-
-ERC-721 Token Name:
-
-```
-CryptoKart
-```
-
-ERC-721 Token Symbol:
-
-```
-OON
-```
-
 Contract Address:
 
 ```
-0x08602d48695be59484aCcDF9b3f99593471C875c
+0x34A2258b93CB8Be01A18b0b721f1BC578bfA494b
 ```
 
 UML Diagrams:
