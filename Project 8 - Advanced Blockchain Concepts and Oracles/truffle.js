@@ -47,12 +47,15 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
+    develop: {
+      accounts: 50,
+      defaultEtherBalance: 500
+    },
     development: {
       host: "127.0.0.1", // Localhost (default: none)
       port: 9545, // Standard Ethereum port (default: none)
       network_id: "*", // Any network (default: none)
     },
-
     rinkeby: {
       provider: () => new HDWallet(mnemonic, `https://rinkeby.infura.io/v3/${infuraKey}`),
       network_id: 4, // rinkeby's id
