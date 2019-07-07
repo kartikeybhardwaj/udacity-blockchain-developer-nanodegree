@@ -24,7 +24,7 @@
 
 const HDWallet = require('./node_modules/truffle-hdwallet-provider/dist');
 // below fields are required
-const infuraKey = "fc490.......";
+const infuraKey = "d67dbb35ee0d47c599a96e3a1d86eb81";
 const mnemonic = "<METAMASK SEED>";
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
