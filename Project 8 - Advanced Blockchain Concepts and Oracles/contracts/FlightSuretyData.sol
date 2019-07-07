@@ -12,6 +12,7 @@ contract FlightSuretyData {
 
     address private contractOwner; // Account used to deploy contract
     bool private operational = true; // Blocks all state changes throughout the contract if false
+    mapping(address => bool) private authorizedCallers; // Addresses that can access this contract
 
     // data structure to determine an airline
     struct Airline {
@@ -111,6 +112,15 @@ contract FlightSuretyData {
     }
 
     /**
+     * @dev Modifier that requires the caller address either be registered as "authorized" or be the owner of the contract.
+     *      This is used to avoid that other accounts may alter this data contract.
+     */
+    modifier requireIsCallerAuthorized() {
+        require(authorizedCallers[msg.sender] == true || msg.sender == contractOwner, "Caller is not authorized");
+        _;
+    }
+
+    /**
      * @dev Modifier that requires the "ContractOwner" account to be the function caller
      */
     modifier requireContractOwner() {
@@ -145,6 +155,14 @@ contract FlightSuretyData {
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
+
+    /**
+     * @dev Add a new address to the list of authorized callers
+     *      Can only be called by the contract owner
+     */
+    function authorizeCaller(address contractAddress) external requireContractOwner {
+        authorizedCallers[contractAddress] = true;
+    }
 
     /**
      * @dev Get operating status of contract
@@ -184,7 +202,8 @@ contract FlightSuretyData {
         address _airlineAccount,
         string calldata _airlineName
     )
-    external {
+    external
+    requireIsCallerAuthorized {
         addAirline(_airlineAccount, _airlineName);
     }
 
@@ -244,7 +263,8 @@ contract FlightSuretyData {
         address _airlineAccount,
         string calldata _airlineName,
         uint256 _timestamp
-    ) external {
+    ) external
+    requireIsCallerAuthorized {
         bytes32 flightKey = getFlightKey(_airlineAccount, _airlineName, _timestamp);
         require(!payoutCredited[flightKey], "Insurance payout have already been credited");
         for (uint i = 0; i < insurances[flightKey].length; i++) {
@@ -265,7 +285,8 @@ contract FlightSuretyData {
     function pay(
         address payable _insureeAccount
     )
-    external {
+    external
+    requireIsCallerAuthorized {
         uint256 payableAmount = creditPayoutsToInsuree[_insureeAccount];
         delete(creditPayoutsToInsuree[_insureeAccount]);
         _insureeAccount.transfer(payableAmount);
@@ -281,7 +302,8 @@ contract FlightSuretyData {
         address _airlineAccount
     )
     external
-    payable {
+    payable
+    requireIsCallerAuthorized {
         addFund(_airlineAccount, msg.value);
         airlines[_airlineAccount].isFunded = true;
         emit AirlineFunded(_airlineAccount, msg.value);
@@ -328,6 +350,7 @@ contract FlightSuretyData {
     )
     external
     view
+    requireIsCallerAuthorized
     returns(bool) {
         return airlines[_airlineAccount].isFunded == true;
     }
@@ -339,6 +362,7 @@ contract FlightSuretyData {
         address _airlineAccount
     ) external
     view
+    requireIsCallerAuthorized
     returns(uint256) {
         return airlines[_airlineAccount].fund;
     }
