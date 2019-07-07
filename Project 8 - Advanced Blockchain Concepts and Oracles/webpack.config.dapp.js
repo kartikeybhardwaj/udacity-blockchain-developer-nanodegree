@@ -1,47 +1,34 @@
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
-  entry: ['babel-polyfill', path.join(__dirname, "src/dapp")],
+  mode: 'development',
+  entry: "./src/dapp/index.js",
   output: {
-    path: path.join(__dirname, "prod/dapp"),
-    filename: "bundle.js"
-  },
-  module: {
-    rules: [
-    {
-        test: /\.(js|jsx)$/,
-        use: "babel-loader",
-        exclude: /node_modules/
-      },
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"]
-      },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'file-loader'
-        ]
-      },
-      {
-        test: /\.html$/,
-        use: "html-loader",
-        exclude: /node_modules/
-      }
-    ]
+    filename: "index.js",
+    path: path.resolve(__dirname, "dist"),
   },
   plugins: [
-    new HtmlWebpackPlugin({ 
-      template: path.join(__dirname, "src/dapp/index.html")
-    })
+    new CopyWebpackPlugin([{
+      from: "./src/dapp/index.html",
+      to: "index.html"
+    }]),
+    new CopyWebpackPlugin([{
+      from: "./src/dapp/styles.css",
+      to: "styles.css"
+    }]),
+    new CopyWebpackPlugin([{
+      from: "./src/dapp/flight.jpg",
+      to: "flight.jpg"
+    }]),
+    new CopyWebpackPlugin([{
+      from: "./src/dapp/config.json",
+      to: "config.json"
+    }]),
   ],
-  resolve: {
-    extensions: [".js"]
-  },
   devServer: {
-    contentBase: path.join(__dirname, "dapp"),
+    contentBase: path.join(__dirname, "dist"),
     port: 8000,
-    stats: "minimal"
-  }
+    compress: true
+  },
 };
