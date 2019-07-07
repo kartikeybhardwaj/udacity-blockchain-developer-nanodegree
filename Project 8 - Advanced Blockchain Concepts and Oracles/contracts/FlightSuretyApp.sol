@@ -290,6 +290,22 @@ contract FlightSuretyApp {
     }
 
     /**
+     *  @dev get amount paid by insuree
+     *
+     */
+    function getAmountPaidByInsuree(
+        address _airlineAccount,
+        string calldata _airlineName,
+        uint256 _timestamp
+    ) external
+    view
+    returns(uint256) {
+        bytes32 flightKey = getFlightKey(_airlineAccount, _airlineName, _timestamp);
+        require(flights[flightKey].isRegistered == true, "Flight not registered");
+        return flightSuretyData.getAmountPaidByInsuree(msg.sender, _airlineAccount, _airlineName, _timestamp);
+    }
+
+    /**
      * @dev Claim credit for a delayed flight.
      *
      */
@@ -471,6 +487,8 @@ interface FlightSuretyData {
     function registerAirline(address airlineAccount, string calldata airlineName) external;
 
     function buy(address payable insureeAccount, address airlineAccount, string calldata airlineName, uint256 timestamp) external payable;
+
+    function getAmountPaidByInsuree(address payable insureeAccount, address airlineAccount, string calldata airlineName, uint256 timestamp) external view returns(uint256 amountPaid);
 
     function creditInsurees(uint256 creditPercentage, address airlineAccount, string calldata airlineName, uint256 timestamp) external;
 

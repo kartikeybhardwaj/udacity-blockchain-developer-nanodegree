@@ -344,6 +344,28 @@ contract FlightSuretyData {
     }
 
     /**
+     *  @dev get amount paid by insuree
+     *
+     */
+    function getAmountPaidByInsuree(
+        address payable _insureeAccount,
+        address _airlineAccount,
+        string calldata _airlineName,
+        uint256 _timestamp
+    ) external
+    view
+    returns(uint256 amountPaid) {
+        amountPaid = 0;
+        bytes32 flightKey = getFlightKey(_airlineAccount, _airlineName, _timestamp);
+        for (uint i = 0; i < insurances[flightKey].length; i++) {
+            if (insurances[flightKey][i].insureeAccount == _insureeAccount) {
+                amountPaid = insurances[flightKey][i].amount;
+                break;
+            }
+        }
+    }
+
+    /**
      *  @dev Returns insurees credits
      *
      */
