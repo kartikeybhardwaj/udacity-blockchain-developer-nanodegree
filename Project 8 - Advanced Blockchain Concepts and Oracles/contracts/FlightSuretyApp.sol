@@ -28,7 +28,7 @@ contract FlightSuretyApp {
     uint256 private constant AIRLINES_THRESHOLD = 4;
     uint256 public constant MAX_INSURANCE_COST = 1 ether;
     uint256 public constant INSURANCE_RETURN_PERCENTAGE = 150;
-    uint256 public MINIMUM_FUND = 10 ether;
+    uint256 public constant MINIMUM_FUND = 10 ether;
 
     address private contractOwner; // Account used to deploy contract
 
@@ -191,7 +191,7 @@ contract FlightSuretyApp {
     requireIsAirline
     requireIsAirlineFunded
     returns(bool success, uint256 votes) {
-        require(isAirline(_airlineAccount), "Airline is already registered");
+        require(!isAirline(_airlineAccount), "Airline is already registered");
         success = false;
         votes = 0;
         uint256 airlinesCount = flightSuretyData.getAirlinesCount();
