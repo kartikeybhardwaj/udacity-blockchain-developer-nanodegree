@@ -333,6 +333,17 @@ contract FlightSuretyData {
     }
 
     /**
+     * @dev get fund of airline
+     */
+    function getFund(
+        address _airlineAccount
+    ) external
+    view
+    returns(uint256) {
+        return airlines[_airlineAccount].fund;
+    }
+
+    /**
      *  @dev check if address is of airline or not
      *
      */
