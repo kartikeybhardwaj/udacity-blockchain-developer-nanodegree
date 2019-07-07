@@ -11,7 +11,7 @@ module.exports = function (deployer, network, accounts) {
         return deployer.deploy(FlightSuretyApp, FlightSuretyData.address).then(() => {
             let config = {
                 localhost: {
-                    url: network == 'development' ? 'http://localhost:9545' : 'wss://rinkeby.infura.io/ws/v3/d67dbb35ee0d47c599a96e3a1d86eb81',
+                    url: network == 'development' ? 'http://127.0.0.1:9545' : 'https://rinkeby.infura.io/v3/d67dbb35ee0d47c599a96e3a1d86eb81',
                     dataAddress: FlightSuretyData.address,
                     appAddress: FlightSuretyApp.address
                 }
