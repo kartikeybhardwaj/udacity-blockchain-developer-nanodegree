@@ -1,5 +1,6 @@
 body {
-    background-image: url('flight.jpg'); /* Source: iStockPhoto */
+    background-image: url('flight.jpg');
+    /* Source: iStockPhoto */
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -37,6 +38,7 @@ label.form {
     font-size: 14px;
     margin-right: 20px;
 }
+
 input {
     margin-right: 30px;
 }
