@@ -288,6 +288,29 @@ contract('Flight Surety Tests', async (accounts) => {
         assert.equal(BigNumber(fundsAfter).toNumber(), BigNumber(fundsBefore.add(resultPassengerAmountPaid1).add(resultPassengerAmountPaid2).sub(resultPassengerAmountCredit1).sub(resultPassengerAmountCredit2)).toNumber());
     });
 
+    it('(passenger) can withdraw credits successfully', async () => {
+        // ARRANGE
+        let passengerAccount = accounts[9];
+        let passengerAmountPaid = web3.utils.toWei("0.8", "ether");
+        let insuranceReturnPercentage = 150;
+        let insuranceCredits = passengerAmountPaid * insuranceReturnPercentage / 100;
+        let balanceBeforeTransaction;
+        let balanceAfterTransaction;
+        // ACT
+        try {
+            balanceBeforeTransaction = await web3.eth.getBalance(passengerAccount);
+            await config.flightSuretyApp.withdrawCredits({
+                from: passengerAccount,
+                gasPrice: 0
+            });
+            balanceAfterTransaction = await web3.eth.getBalance(passengerAccount);
+        } catch (e) {
+            assert.fail(e.message);
+        }
+        // ASSERT
+        assert.equal(insuranceCredits, (balanceAfterTransaction - balanceBeforeTransaction));
+    });
+
 });
 
 let expectThrow = async function (promise) {
