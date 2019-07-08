@@ -157,8 +157,7 @@ contract FlightSuretyApp {
     external
     payable
     requireIsOperational
-    requireIsAirline
-    requireIsMinimumFunded {
+    requireIsAirline {
         flightSuretyData
             .fund
             .value(msg.value)(msg.sender);
