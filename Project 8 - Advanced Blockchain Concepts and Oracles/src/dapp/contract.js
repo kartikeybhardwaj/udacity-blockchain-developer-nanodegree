@@ -59,21 +59,15 @@ export default class Contract {
             }, callback);
     }
 
-    registerAirline(airlineAccount, fromAccount, callback) {
+    registerAirline(airlineAccount, fromAccount, airlineName, callback) {
         let self = this;
         self.flightSuretyApp.methods
-            .registerAirline(airlineAccount)
+            .registerAirline(airlineAccount, airlineName)
             .send({
                 from: fromAccount,
                 gas: 4000000,
                 gasPrice: 100000000000
-            })
-            .then(this.flightSuretyData.events.evntRegisterAirline({
-                    fromBlock: "latest"
-                },
-                function (error, event) {
-                    callback(error, event.returnValues);
-                }));
+            }, callback);
     }
 
     fund(airlineAccount, callback) {
@@ -91,7 +85,7 @@ export default class Contract {
     buy(passengerAccount, airlineAccount, airlineName, timestamp, callback) {
         let self = this;
         self.flightSuretyApp.methods
-            .buy(airlineAccount, airlineName, timestamp)
+            .buyInsurance(airlineAccount, airlineName, timestamp)
             .send({
                 from: passengerAccount,
                 value: this.web3.utils.toWei("1", "ether"),
@@ -104,7 +98,7 @@ export default class Contract {
     registerFlight(airlineAccount, airlineName, timestamp, callback) {
         let self = this
         self.flightSuretyApp.methods
-            .registerFlight(airlineAccount, airlineName, timestamp)
+            .registerFlight(airlineName, timestamp)
             .send({
                 from: airlineAccount,
                 gas: 4000000,
@@ -128,33 +122,10 @@ export default class Contract {
         return await this.web3.utils.fromWei(balance);
     }
 
-    checkCredit(passengerAccount, callback) {
-        let self = this;
-        self.flightSuretyApp.methods
-            .checkCredit()
-            .call({
-                    from: passengerAccount,
-                    gas: 4000000,
-                    gasPrice: 100000000000
-                },
-                callback);
-    }
-
-    passengerPaid(passengerAccount, airlineAccount, airlineName, timestamp, callback) {
-        let self = this;
-        self.FlightSuretyData.methods
-            .boughtPassenger(passengerAccount, airlineAccount, airlineName, timestamp)
-            .call({
-                from: passengerAccount,
-                gas: 4000000,
-                gasPrice: 10000000000
-            }, callback);
-    }
-
     pay(passengerAccount, airlineAccount, airlineName, timestamp, callback) {
         let self = this;
         self.flightSuretyApp.methods
-            .pay(passengerAccount, airlineAccount, airlineName, timestamp)
+            .withdrawCredits()
             .send({
                 from: passengerAccount
             }, callback);

@@ -12,6 +12,7 @@ import './flightsurety.css';
 
     let contract = new Contract('localhost', () => {
 
+        let flightsName = ['BC001', 'AD001', 'BC058', 'AD058', 'AD019'];
         let flights = {
             'BC001': [date.getTime() + 1001, contract.airlines[0]],
             'AD001': [date.getTime() + 2001, contract.airlines[1]],
@@ -30,10 +31,11 @@ import './flightsurety.css';
         });
 
         // Initialize accounts list
-        authorizedAccounts.push(contract.owner);
-        var optionsAccount = contract.airlines;
+        // authorizedAccounts.push(contract.owner);
+        // authorizedAccounts.push(contract.airlines[0]);
+        // var optionsAccount = contract.airlines;
         updateSelectList('selectAirline', contract.airlines);
-        updateSelectList('selectAccount', authorizedAccounts);
+        // updateSelectList('selectAccount', authorizedAccounts);
         updateSelectList('populateFlights', Object.keys(flights));
 
         let flightID = populateFlights.options[populateFlights.selectedIndex].value;
@@ -43,22 +45,14 @@ import './flightsurety.css';
         flightAirline.textContent = "Airline: " + flights[flightID][1];
         updateSelectList('passengerList', contract.passengers);
         updateSelectList('passengerList2', contract.passengers);
+        populateRegistered(contract.airlines, contract);
 
         DOM.elid('register-airline').addEventListener('click', async () => {
             let caller = selectAccount.options[selectAccount.selectedIndex].value;
             let airline = selectAirline.options[selectAirline.selectedIndex].value;
-            contract.registerAirline(airline, caller, (error, result) => {
-                let success = result['success'];
-                console.log("Success: " + success);
-                let votes = result['votes'];
-                if (success) {
-                    registeredAirlines.push(airline);
-                    authorizedAccounts.push(airline);
-                    updateList('registeredAirline', registeredAirlines);
-                    updateSelectList('selectAccount', authorizedAccounts);
-                } else if (!success) {
-                    console.log("Needs more votes. Current votes: " + votes);
-                }
+            let airlineName = flightsName[selectAirline.selectedIndex];
+            contract.registerAirline(airline, caller, airlineName, (error, result) => {
+                populateRegistered(contract.airlines, contract);
             });
         });
 
@@ -131,28 +125,6 @@ import './flightsurety.css';
             displayDiv.append(section);
         });
 
-        DOM.elid('check-credits').addEventListener('click', async () => {
-            let acc = passengerList2.options[passengerList2.selectedIndex].value;
-            contract.checkCredit(acc, (error, result) => {
-                let displayDiv = DOM.elid("display-credit");
-                displayDiv.innerHTML = '';
-                let section = DOM.section();
-                section.appendChild(DOM.h5('Credits of passenger ' + acc + ' : ' + result + ' ETH'));
-                displayDiv.append(section);
-            })
-        });
-
-        DOM.elid('check-payment').addEventListener('click', async () => {
-            let acc = passengerList2.options[passengerList2.selectedIndex].value;
-            let flightCode = populateFlights.options[populateFlights.selectedIndex].value;
-            let airline = flights[flightCode][1];
-            let timestamp = flights[flightCode][0];
-            contract.passengerPaid(acc, airline, flightCode, timestamp, (error, result) => {
-                let paidAmount = Web3.utils.fromWei(result.toString(), 'ether')
-                console.log("Passenger has paid " + result)
-            })
-        });
-
         DOM.elid('withdraw-credits').addEventListener('click', async () => {
             let acc = passengerList2.options[passengerList2.selectedIndex].value;
             let flightCode = populateFlights.options[populateFlights.selectedIndex].value;
@@ -197,10 +169,12 @@ function updateList(listId, listItem) {
 // get registered airlines
 async function populateRegistered(array, contract) {
     clearSelectList('populateRegistered');
+    clearSelectList('selectAccount');
     for (const item of array) {
         await contract.isAirline(item, (error, result) => {
             if (result) {
                 updateSelectList('populateRegistered', [item])
+                updateSelectList('selectAccount', [item]);
             }
         });
     }
