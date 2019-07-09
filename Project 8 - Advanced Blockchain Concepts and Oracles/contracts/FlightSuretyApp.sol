@@ -51,6 +51,11 @@ contract FlightSuretyApp {
         uint256 timestamp
     );
 
+    event FlightRegisteredDApp(
+        bool success,
+        uint256 votes
+    );
+
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
     /********************************************************************************************/
@@ -206,6 +211,7 @@ contract FlightSuretyApp {
                 success = true;
             }
         }
+        emit FlightRegisteredDApp(success, votes);
     }
 
     /**
