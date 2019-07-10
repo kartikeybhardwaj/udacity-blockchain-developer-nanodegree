@@ -1,6 +1,6 @@
-# Udacity Blockchain Capstone
+# Project 9 - Capstone Project
 
-The capstone will build upon the knowledge you have gained in the course in order to build a decentralized housing product. 
+# Udacity Blockchain Capstone
 
 # Project Resources
 
