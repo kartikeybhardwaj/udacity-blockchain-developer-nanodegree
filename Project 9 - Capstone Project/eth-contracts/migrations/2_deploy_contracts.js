@@ -6,3 +6,10 @@ module.exports = function (deployer) {
   deployer.deploy(SquareVerifier);
   deployer.deploy(SolnSquareVerifier);
 };
+
+module.exports = function (deployer) {
+  deployer.deploy(SquareVerifier)
+    .then(() => {
+      return deployer.deploy(SolnSquareVerifier, SquareVerifier.address)
+    });
+}
