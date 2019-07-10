@@ -1,4 +1,5 @@
 # files
+.secret
 .DS_Store
 
 # directories
