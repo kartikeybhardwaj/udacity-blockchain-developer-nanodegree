@@ -12,17 +12,21 @@
  * to sign your transactions before they're sent to a remote public node. Infura API
  * keys are available for free at: infura.io/register
  *
+ *   > > Using Truffle V5 or later? Make sure you install the `web3-one` version.
+ *
+ *   > > $ npm install truffle-hdwallet-provider@web3-one
+ *
  * You'll also need a mnemonic - the twelve word phrase the wallet uses to generate
  * public/private key pairs. If you're publishing your code to GitHub make sure you load this
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
 
-// const HDWalletProvider = require('truffle-hdwallet-provider');
-// const infuraKey = "fj4jll3k.....";
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const HDWallet = require('../node_modules/truffle-hdwallet-provider/dist');
+// below fields are required
+const infuraKey = "70fd11f54dce4658a59cbee27fe796f6";
+const fs = require('fs');
+const mnemonic = fs.readFileSync("../.secret").toString().trim();
 
 module.exports = {
   /**
@@ -44,8 +48,15 @@ module.exports = {
     //
     development: {
       host: "127.0.0.1", // Localhost (default: none)
-      port: 8545, // Standard Ethereum port (default: none)
+      port: 9545, // Standard Ethereum port (default: none)
       network_id: "*", // Any network (default: none)
+    },
+
+    rinkeby: {
+      provider: () => new HDWallet(mnemonic, `https://rinkeby.infura.io/v3/${infuraKey}`),
+      network_id: 4, // rinkeby's id
+      gas: 4500000, // rinkeby has a lower block limit than mainnet
+      gasPrice: 10000000000
     },
 
     // Another network with more advanced options...
