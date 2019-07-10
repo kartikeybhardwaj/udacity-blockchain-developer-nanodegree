@@ -1,4 +1,4 @@
-var ERC721MintableComplete = artifacts.require('ERC721MintableComplete');
+var ERC721Mintable = artifacts.require('HouseERC721Token');
 
 contract('TestERC721Mintable', accounts => {
 
@@ -8,7 +8,7 @@ contract('TestERC721Mintable', accounts => {
 
     describe('match erc721 spec', function () {
         beforeEach(async function () {
-            this.contract = await ERC721MintableComplete.new({
+            this.contract = await ERC721Mintable.new({
                 from: account_one
             });
             // mint multiple tokens
@@ -46,8 +46,8 @@ contract('TestERC721Mintable', accounts => {
 
         // token uri should be complete i.e: https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/1
         it('should return token uri', async function () {
-            const tokenURI = await this.contract.tokenURI(201);
-            assert.equal(tokenURI, 'https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/201', 'Incorrect token uri');
+            const tokenURI = await this.contract.tokenURI(21);
+            assert.equal(tokenURI, 'https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/21', 'Incorrect token uri');
         });
 
         it('should transfer token from one owner to another', async function () {
@@ -61,21 +61,15 @@ contract('TestERC721Mintable', accounts => {
 
     describe('have ownership properties', function () {
         beforeEach(async function () {
-            this.contract = await ERC721MintableComplete.new({
+            this.contract = await ERC721Mintable.new({
                 from: account_one
             });
         });
 
         it('should fail when minting when address is not contract owner', async function () {
-            try {
-                await this.contract.mint(account_two, 222, {
-                    from: account_two
-                });
-                return;
-            } catch (error) {
-                assert.exists(error);
-            }
-            assert.fail('Expected an error but didnt see one!');
+            await expectThrow(this.contract.mint(account_two, 20, {
+                from: account_two
+            }));
         });
 
         it('should return contract owner', async function () {
@@ -85,3 +79,13 @@ contract('TestERC721Mintable', accounts => {
 
     });
 });
+
+var expectThrow = async function (promise) {
+    try {
+        await promise;
+    } catch (error) {
+        assert.exists(error);
+        return;
+    }
+    assert.fail('Expected an error but didnt see one!');
+}
