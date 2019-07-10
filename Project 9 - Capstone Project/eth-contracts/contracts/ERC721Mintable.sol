@@ -41,7 +41,7 @@ contract Ownable {
     public
     onlyOwner {
         _owner = newOwner;
-        emit TransferedOwneship(_owner);
+        emit TransferredOwneship(_owner);
     }
 }
 
@@ -72,11 +72,11 @@ contract Pausable is Ownable {
     }
 
     // a public setter using the inherited onlyOwner modifier that pause or resume
-    function pause(bool paused)
+    function pause(bool isPaused)
     public
     onlyOwner {
-        _paused = paused;
-        if (paused) {
+        _paused = isPaused;
+        if (isPaused) {
             emit Paused(msg.sender);
         } else {
             emit Unpaused(msg.sender);
