@@ -3,5 +3,6 @@
 .DS_Store
 
 # directories
+build/
 node_modules/
 chaindata/
