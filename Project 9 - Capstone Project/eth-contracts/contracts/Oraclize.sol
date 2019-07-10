@@ -105,7 +105,7 @@ library Buffer {
         }
         _buf.capacity = capacity; // Allocate space for the buffer data
         assembly {
-            let ptr: = mload(0x40)
+            let ptr := mload(0x40)
             mstore(_buf, ptr)
             mstore(ptr, 0)
             mstore(0x40, add(ptr, capacity))
@@ -140,11 +140,11 @@ library Buffer {
         uint src;
         uint len = _data.length;
         assembly {
-            let bufptr: = mload(_buf) // Memory address of the buffer data
-            let buflen: = mload(bufptr) // Length of existing buffer data
-            dest: = add(add(bufptr, buflen), 32) // Start address = buffer address + buffer length + sizeof(buffer length)
+            let bufptr := mload(_buf) // Memory address of the buffer data
+            let buflen := mload(bufptr) // Length of existing buffer data
+            dest := add(add(bufptr, buflen), 32) // Start address = buffer address + buffer length + sizeof(buffer length)
             mstore(bufptr, add(buflen, mload(_data))) // Update buffer length
-            src: = add(_data, 32)
+            src := add(_data, 32)
         }
         for (; len >= 32; len -= 32) { // Copy word-length chunks while possible
             assembly {
@@ -155,8 +155,8 @@ library Buffer {
         }
         uint mask = 256 ** (32 - len) - 1; // Copy remaining bytes
         assembly {
-            let srcpart: = and(mload(src), not(mask))
-            let destpart: = and(mload(dest), mask)
+            let srcpart := and(mload(src), not(mask))
+            let destpart := and(mload(dest), mask)
             mstore(dest, or(destpart, srcpart))
         }
         return _buf;
@@ -175,9 +175,9 @@ library Buffer {
             resize(_buf, _buf.capacity * 2);
         }
         assembly {
-            let bufptr: = mload(_buf) // Memory address of the buffer data
-            let buflen: = mload(bufptr) // Length of existing buffer data
-            let dest: = add(add(bufptr, buflen), 32) // Address = buffer address + buffer length + sizeof(buffer length)
+            let bufptr := mload(_buf) // Memory address of the buffer data
+            let buflen := mload(bufptr) // Length of existing buffer data
+            let dest := add(add(bufptr, buflen), 32) // Address = buffer address + buffer length + sizeof(buffer length)
             mstore8(dest, _data)
             mstore(bufptr, add(buflen, 1)) // Update buffer length
         }
@@ -197,9 +197,9 @@ library Buffer {
         }
         uint mask = 256 ** _len - 1;
         assembly {
-            let bufptr: = mload(_buf) // Memory address of the buffer data
-            let buflen: = mload(bufptr) // Length of existing buffer data
-            let dest: = add(add(bufptr, buflen), _len) // Address = buffer address + buffer length + sizeof(buffer length) + len
+            let bufptr := mload(_buf) // Memory address of the buffer data
+            let buflen := mload(bufptr) // Length of existing buffer data
+            let dest := add(add(bufptr, buflen), _len) // Address = buffer address + buffer length + sizeof(buffer length) + len
             mstore(dest, or(and(mload(dest), not(mask)), _data))
             mstore(bufptr, add(buflen, _len)) // Update buffer length
         }
@@ -863,7 +863,7 @@ contract usingOraclize {
 
     function getCodeSize(address _addr) view internal returns(uint _size) {
         assembly {
-            _size: = extcodesize(_addr)
+            _size := extcodesize(_addr)
         }
     }
 
@@ -1120,7 +1120,7 @@ contract usingOraclize {
         bytes32 queryId = oraclize_query("random", args, _customGasLimit);
         bytes memory delay_bytes8_left = new bytes(8);
         assembly {
-            let x: = mload(add(delay_bytes8, 0x20))
+            let x := mload(add(delay_bytes8, 0x20))
             mstore8(add(delay_bytes8_left, 0x27), div(x, 0x100000000000000000000000000000000000000000000000000000000000000))
             mstore8(add(delay_bytes8_left, 0x26), div(x, 0x1000000000000000000000000000000000000000000000000000000000000))
             mstore8(add(delay_bytes8_left, 0x25), div(x, 0x10000000000000000000000000000000000000000000000000000000000))
@@ -1150,8 +1150,8 @@ contract usingOraclize {
         offset += 32 + 2;
         sigs_ = copyBytes(_dersig, offset + (uint(uint8(_dersig[offset - 1])) - 0x20), 32, sigs_, 0);
         assembly {
-            sigr: = mload(add(sigr_, 32))
-            sigs: = mload(add(sigs_, 32))
+            sigr := mload(add(sigr_, 32))
+            sigs := mload(add(sigs_, 32))
         }
         (sigok, signer) = safer_ecrecover(_tosignh, 27, sigr, sigs);
         if (address(uint160(uint256(keccak256(_pubkey)))) == signer) {
@@ -1172,14 +1172,14 @@ contract usingOraclize {
         bytes memory tosign2 = new bytes(1 + 65 + 32);
         tosign2[0] = byte(uint8(1)); //role
         copyBytes(_proof, _sig2offset - 65, 65, tosign2, 1);
-        bytes memory CODEHASH = hex "fd94fa71bc0ba10d39d464d0d8f465efeef0a2764e3887fcc9df41ded20f505c";
+        bytes memory CODEHASH = hex"fd94fa71bc0ba10d39d464d0d8f465efeef0a2764e3887fcc9df41ded20f505c";
         copyBytes(CODEHASH, 0, 32, tosign2, 1 + 65);
         sigok = verifySig(sha256(tosign2), sig2, appkey1_pubkey);
         if (!sigok) {
             return false;
         }
         // Random DS Proof Step 7: Verify the APPKEY1 provenance (must be signed by Ledger)
-        bytes memory LEDGERKEY = hex "7fb956469c5c9b89840d55b43537e66a98dd4811ea0a27224272c2e5622911e8537a2f8e86a46baec82864e98dd01e9ccc2f8bc5dfc9cbe5a91a290498dd96e4";
+        bytes memory LEDGERKEY = hex"7fb956469c5c9b89840d55b43537e66a98dd4811ea0a27224272c2e5622911e8537a2f8e86a46baec82864e98dd01e9ccc2f8bc5dfc9cbe5a91a290498dd96e4";
         bytes memory tosign3 = new bytes(1 + 65);
         tosign3[0] = 0xFE;
         copyBytes(_proof, 3, 65, tosign3, 1);
@@ -1259,7 +1259,7 @@ contract usingOraclize {
         uint j = 32 + _toOffset;
         while (i < (32 + _fromOffset + _length)) {
             assembly {
-                let tmp: = mload(add(_from, i))
+                let tmp := mload(add(_from, i))
                 mstore(add(_to, j), tmp)
             }
             i += 32;
@@ -1283,13 +1283,13 @@ contract usingOraclize {
         bool ret;
         address addr;
         assembly {
-            let size: = mload(0x40)
+            let size := mload(0x40)
             mstore(size, _hash)
             mstore(add(size, 32), _v)
             mstore(add(size, 64), _r)
             mstore(add(size, 96), _s)
-            ret: = call(3000, 1, 0, size, 128, size, 32) // NOTE: we can reuse the request memory because we deal with the return code.
-            addr: = mload(size)
+            ret := call(3000, 1, 0, size, 128, size, 32) // NOTE: we can reuse the request memory because we deal with the return code.
+            addr := mload(size)
         }
         return (ret, addr);
     }
@@ -1309,14 +1309,14 @@ contract usingOraclize {
          Compact means, uint8 is not padded to 32 bytes.
         */
         assembly {
-            r: = mload(add(_sig, 32))
-            s: = mload(add(_sig, 64))
+            r := mload(add(_sig, 32))
+            s := mload(add(_sig, 64))
             /*
              Here we are loading the last 32 bytes. We exploit the fact that
              'mload' will pad with zeroes if we overread.
              There is no 'mload8' to do this, but that would be nicer.
             */
-            v: = byte(0, mload(add(_sig, 96)))
+            v := byte(0, mload(add(_sig, 96)))
             /*
               Alternative solution:
               'byte' is not working due to the Solidity parser, so lets
@@ -1341,7 +1341,7 @@ contract usingOraclize {
 
     function safeMemoryCleaner() internal pure {
         assembly {
-            let fmem: = mload(0x40)
+            let fmem := mload(0x40)
             codecopy(fmem, codesize, sub(msize, fmem))
         }
     }

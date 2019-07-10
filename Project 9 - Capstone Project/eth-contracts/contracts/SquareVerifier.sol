@@ -3,7 +3,9 @@
 /**
  * @title Elliptic curve operations on twist points for alt_bn128
  * @author Mustafa Al-Bassam (mus@musalbas.com)
+ * @dev Homepage: https://github.com/musalbas/solidity-BN256G2
  */
+
 library BN256G2 {
     uint256 internal constant FIELD_MODULUS = 0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47;
     uint256 internal constant TWISTBX = 0x2b149d40ceb8aaae81be18991be06ac3b5b4c5e559dbefa33267e6dc24a138e5;
@@ -32,7 +34,7 @@ library BN256G2 {
         uint256 pt1yx, uint256 pt1yy,
         uint256 pt2xx, uint256 pt2xy,
         uint256 pt2yx, uint256 pt2yy
-    ) public pure returns(
+    ) public view returns(
         uint256, uint256,
         uint256, uint256
     ) {
@@ -105,7 +107,7 @@ library BN256G2 {
         uint256 s,
         uint256 pt1xx, uint256 pt1xy,
         uint256 pt1yx, uint256 pt1yy
-    ) public pure returns(
+    ) public view returns(
         uint256, uint256,
         uint256, uint256
     ) {
@@ -193,12 +195,12 @@ library BN256G2 {
     function _FQ2Div(
         uint256 xx, uint256 xy,
         uint256 yx, uint256 yy
-    ) internal pure returns(uint256, uint256) {
+    ) internal view returns(uint256, uint256) {
         (yx, yy) = _FQ2Inv(yx, yy);
         return _FQ2Mul(xx, xy, yx, yy);
     }
 
-    function _FQ2Inv(uint256 x, uint256 y) internal pure returns(uint256, uint256) {
+    function _FQ2Inv(uint256 x, uint256 y) internal view returns(uint256, uint256) {
         uint256 inv = _modInv(addmod(mulmod(y, y, FIELD_MODULUS), mulmod(x, x, FIELD_MODULUS), FIELD_MODULUS), FIELD_MODULUS);
         return (
             mulmod(x, inv, FIELD_MODULUS),
@@ -222,24 +224,27 @@ library BN256G2 {
         return yyx == 0 && yyy == 0;
     }
 
-    function _modInv(uint256 a, uint256 n) internal pure returns(uint256 t) {
-        t = 0;
-        uint256 newT = 1;
-        uint256 r = n;
-        uint256 newR = a;
-        uint256 q;
-        while (newR != 0) {
-            q = r / newR;
-            (t, newT) = (newT, submod(t, mulmod(q, newT, n), n));
-            (r, newR) = (newR, r - q * newR);
+    function _modInv(uint256 a, uint256 n) internal view returns(uint256 result) {
+        bool success;
+        assembly {
+            let freemem := mload(0x40)
+            mstore(freemem, 0x20)
+            mstore(add(freemem, 0x20), 0x20)
+            mstore(add(freemem, 0x40), 0x20)
+            mstore(add(freemem, 0x60), a)
+            mstore(add(freemem, 0x80), sub(n, 2))
+            mstore(add(freemem, 0xA0), n)
+            success := staticcall(sub(gas, 2000), 5, freemem, 0xC0, freemem, 0x20)
+            result := mload(freemem)
         }
+        require(success);
     }
 
     function _fromJacobian(
         uint256 pt1xx, uint256 pt1xy,
         uint256 pt1yx, uint256 pt1yy,
         uint256 pt1zx, uint256 pt1zy
-    ) internal pure returns(
+    ) internal view returns(
         uint256 pt2xx, uint256 pt2xy,
         uint256 pt2yx, uint256 pt2yy
     ) {
@@ -387,8 +392,6 @@ library BN256G2 {
         }
     }
 }
-
-
 // This file is MIT Licensed.
 //
 // Copyright 2017 Christian Reitwiessner
@@ -439,7 +442,7 @@ library Pairing {
         input[3] = p2.Y;
         bool success;
         assembly {
-            success: = call(sub(gas, 2000), 6, 0, input, 0xc0, r, 0x60)
+            success := call(sub(gas, 2000), 6, 0, input, 0xc0, r, 0x60)
             // Use "invalid" to make gas estimation work
             switch success
             case 0 {
@@ -449,7 +452,7 @@ library Pairing {
         require(success);
     }
     /// @return the sum of two points of G2
-    function addition(G2Point memory p1, G2Point memory p2) internal pure returns(G2Point memory r) {
+    function addition(G2Point memory p1, G2Point memory p2) internal returns(G2Point memory r) {
         (r.X[1], r.X[0], r.Y[1], r.Y[0]) = BN256G2.ECTwistAdd(p1.X[1], p1.X[0], p1.Y[1], p1.Y[0], p2.X[1], p2.X[0], p2.Y[1], p2.Y[0]);
     }
     /// @return the product of a point on G1 and a scalar, i.e.
@@ -461,7 +464,7 @@ library Pairing {
         input[2] = s;
         bool success;
         assembly {
-            success: = call(sub(gas, 2000), 7, 0, input, 0x80, r, 0x60)
+            success := call(sub(gas, 2000), 7, 0, input, 0x80, r, 0x60)
             // Use "invalid" to make gas estimation work
             switch success
             case 0 {
@@ -490,7 +493,7 @@ library Pairing {
         uint[1] memory out;
         bool success;
         assembly {
-            success: = call(sub(gas, 2000), 8, 0, add(input, 0x20), mul(inputSize, 0x20), out, 0x20)
+            success := call(sub(gas, 2000), 8, 0, add(input, 0x20), mul(inputSize, 0x20), out, 0x20)
             // Use "invalid" to make gas estimation work
             switch success
             case 0 {
@@ -571,17 +574,17 @@ contract Verifier {
     }
 
     function verifyingKey() pure internal returns(VerifyingKey memory vk) {
-        vk.A = Pairing.G2Point([uint256(0x1ecda7c058678767b48d73cbb0c9ee0bbd78796b90c080c325fceb3304d08589), uint256(0x10e3a1ace34492137c4b7e6125048716ac3b55f4afbda01f7a1881e85c2c103b)], [uint256(0x014ec69ebfdca3832e5d3c6e02322bba938ae6ac6071a7c8e25c1bd5094da3ef), uint256(0x1f879299d0ec07c1a52319ec89e0d458183d64d02bd780003ce0c55dcb89f65b)]);
-        vk.B = Pairing.G1Point(uint256(0x1ba7839e5cd706a4f00c44438f5dd4d693fb8879e87a258f0d0e1ef6d81481da), uint256(0x15fdd06fe69c11916d7ec2ff4def038f142ba879f167921af0fe5e17685b2c19));
-        vk.C = Pairing.G2Point([uint256(0x1f759cc77674295e8961394de93c8d7aaf188565422d732a622a97418b7403a1), uint256(0x24dab1902d6d50cc84335cb7be6ee7a8689d9cf717a3377756f99f6453454f7b)], [uint256(0x13b1c1377ab8876e7de546309093da26d26d154434567660046e467469155899), uint256(0x092abcb5dc78564c23f7a1eaed2aac8e341551c9cb9987b31f6eaccc436f76d6)]);
-        vk.gamma = Pairing.G2Point([uint256(0x0d5b66c8fd5e72886b5e7bcd4466b74d4415fbd7c516f5be62a5419da82efe19), uint256(0x02d1ae07ed9bf1a14da9ab0aed2d1f1774cc48f820fcb4798499faded5be35bb)], [uint256(0x1db2f3146db36b0954a19adaed41332a05d84d840bba4f3805c9297ed3ad7f71), uint256(0x1228e7a7d965d90150488c74d9c41145b6633d40e0124905bfa14ff26143e57e)]);
-        vk.gammaBeta1 = Pairing.G1Point(uint256(0x170535bf9d9b8c8f41fc50667566f9c988351be64dd12333f62f5d78f8bd5088), uint256(0x301f7d856c2c44998413975f37ef534b965e606d5f1bacd83bbccb07a4353970));
-        vk.gammaBeta2 = Pairing.G2Point([uint256(0x1fe1c9c1cbbf1457c9910fd52122b977d4595ed8c55d111fc5004e69ca5d63e5), uint256(0x2c598fcabd6a6c419fc8f98a5bd749906c328cf0d9c71277a5cb708e1505cad5)], [uint256(0x3044a3b6f9b93b2baf0626ec53d5958f18ef098560678d43eb7c18ea48da4801), uint256(0x2065c059b658cf26b335c8dec3bd23c445918810e684d982b003f0731826dce4)]);
-        vk.Z = Pairing.G2Point([uint256(0x14e2f5def3de819d961a83d96b11341f4a5dc2f7879b2d0b381d263cf2fdef15), uint256(0x13195d483c02ea4e8854110b3064d7a104f6c884cbae7fd72d904b6733eab8c6)], [uint256(0x1f8ab2704e6102b158d82178754111d1feed0234951c132310aa54b2a41957ba), uint256(0x14f43e879617275e69c73454348a8ea48e30fd3342498d23b503c0d66cc26bb0)]);
+        vk.A = Pairing.G2Point([uint256(0x029c00e7d2623dda7e0d1b48943cd8e617b7b2e07d9f14c05fb35cd048bd5c3e), uint256(0x17bc6d23bb3e682473d226a75b578389ba8a8efcb6def7d4cd67b307d2778378)], [uint256(0x06281583aafd913d833e8be3adf57f005961eca9f994c9b76cad67702983324e), uint256(0x0291f371a6532ebd0e02e96a1f2d48c84fdfd4a603f0bdbade0129d41556b9ac)]);
+        vk.B = Pairing.G1Point(uint256(0x16a8a414b304332d9104dfe66124969a20c4181e762c0bef48d2e44ad512aa00), uint256(0x01b2f1cc9e9218d9bb9def5536ab077386c5da6bffa082bf250458530cb35125));
+        vk.C = Pairing.G2Point([uint256(0x18e48b39d4e6746872024ebe1f3ccebd6788f8101247c3549e2d43a5ece64ea0), uint256(0x24d13c762c8501b6289cdec58bdf98222f286a7b9890b09ccadac532efebf25e)], [uint256(0x2137cf4161d21fae32e87f39ebe19f9c4ea12a7f3906f4bbf8742aba5ab57142), uint256(0x1c9e79f7c8190de7a990cba6cc21c73c2b3d17c90971c9ddeeed0ce57c8b9b26)]);
+        vk.gamma = Pairing.G2Point([uint256(0x26bb11f020b363b9ad49f27aab47b559ced1c9b8808209c69e4499712510bf77), uint256(0x256c54d2e9dbe734f35fd58e1371e81d683995e3e016fd53e17dfb2f759e5e6f)], [uint256(0x29531506df965ed42b9bb6fa0af8de1bc9ce8987acd5e1ea7dc74691566ea6f6), uint256(0x12c54376dda7f2ea8064c365db21cc2584c5d971e7d99f3dbdd02f1cccfc0145)]);
+        vk.gammaBeta1 = Pairing.G1Point(uint256(0x12437b65789f76ec8fb98d8a3671818adf30f00d33d46dcc54c9f8240b29d1ff), uint256(0x28194aef968a531f2324cad759cbe50d1d02adb82361ae65d3c2c2ac44b62fd4));
+        vk.gammaBeta2 = Pairing.G2Point([uint256(0x0bf7362314412c795b8ec21927f0332d10f4ccf9dbe9b7998c81479128d6b919), uint256(0x1408d671577267a999c815f032fc0ce099818f52170af86be08b45067aaa813d)], [uint256(0x118494458efe474e6eb5110bcddce339e507ed67d54966d1958f4a3436b811c0), uint256(0x179b1e237e4d75b9c6e204f3ed51ab02990d7d5bf389e878b866c11c29586733)]);
+        vk.Z = Pairing.G2Point([uint256(0x0d89cb3b58c7e3e67f2b600baff55ed54cd3a9385ef5af9cf40da411f2eaa604), uint256(0x28e799a5cbe6ca9c5c55e02f9b2b4497cb21b0d262bfbaae17eeff31cf1daf77)], [uint256(0x13112e5b0a0b0895cbc034b13a18d3b557cb73b9b701685041f9772acc08064c), uint256(0x286f0067cd43f252ac894ce1e722be028716e6da762bcbdc14e2a1ba7fd3467c)]);
         vk.IC = new Pairing.G1Point[](3);
-        vk.IC[0] = Pairing.G1Point(uint256(0x2cb8551d0c17c551641445615179c2c0ce388927cdd601864050394f6d006871), uint256(0x2f0ab63ee3ee17383649aa0acc3b4e1d407aa69fe966a55eebbb722f9f1ac8e0));
-        vk.IC[1] = Pairing.G1Point(uint256(0x06318f04b2a9d08240fb73836798f759005800fadb0eeecc28da263708f115f2), uint256(0x05cb7b401f3ce1225dbff985f22a103a07718fb22bce0fe8e21dffe3d560027b));
-        vk.IC[2] = Pairing.G1Point(uint256(0x1c26847c95735f01a9359b86b6af25e07b960aed40d79d32a8d41895803ce991), uint256(0x00e9748b5827ef9b70e455985ef059afbb553b1d43aad05252ea95d49449d217));
+        vk.IC[0] = Pairing.G1Point(uint256(0x0b295c57b28e9a5a06ca62be2936501879f4ec95babe1a982f85ee5680a35069), uint256(0x0702b51faea6b894cb6e2a6dc882d12295dc3d2db21bd9cd0004992c12ecc98a));
+        vk.IC[1] = Pairing.G1Point(uint256(0x11dca227e364943a56b841360a0597c13af6a9bf10b77e00e8cbb152346a3db6), uint256(0x0995367e3206fdf45a3ea5fe550fc9c3fac20a235e889da25549608b9c3c759d));
+        vk.IC[2] = Pairing.G1Point(uint256(0x1bea8e512c0710a5e654919397b52f0237d38d8a2a85ec71215de6843449c317), uint256(0x2544a08fd4a28780752cbc28ea3503a8a15a641684e2136b0b96abeba92026e8));
     }
 
     function verify(uint[] memory input, Proof memory proof) internal returns(uint) {
