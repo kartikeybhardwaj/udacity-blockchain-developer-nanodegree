@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "crypto-js": "^3.1.9-1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "level": "^5.0.1"
   }
 }
